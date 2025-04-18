@@ -1,5 +1,5 @@
 body {
-  margin: 20px; /*margin*/
+  padding: 20px; /*margin*/
   background-color: lightgrey;
   color: black;
 }
@@ -11,6 +11,7 @@ body {
 @media (min-width: 600px) {
   .app-container {
     display: grid;
+    width: 100vw; /* cant figure this out */
     grid-template-columns: 200px 1fr; /*header should be 200px, everything else rest of screen */
     gap: 20px;
   }
@@ -18,6 +19,7 @@ body {
 
 .notes-grid {
   display: grid;
+  width: 100%;
   grid-template-columns: repeat(
     auto-fill,
     minmax(250px, 1fr)
@@ -64,6 +66,7 @@ h2 {
 
 textarea,
 input {
+  background-color: #f9f9f9;
   border-radius: 5px;
   border: 1px solid black;
   padding: 10px;
