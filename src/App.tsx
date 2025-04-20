@@ -38,11 +38,16 @@ const App = () => {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleNoteClick = (note: Note) => {
+    setSelectedNote(note);
+    setTitle(note.title);
+    setContent(note.content);
+  };
+
+  const handleAddNote = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("title: ", title);
-    console.log("content: ", content);
 
     const newNote: Note = {
       id: notes.length + 1,
@@ -55,9 +60,51 @@ const App = () => {
     setContent("");
   };
 
+  //edit functionality
+  const handleUpdateNote = (event: React.FormEvent) => {
+    event.preventDefault(); //prevents form submission on save click
+
+    if (!selectedNote) {
+      return; //nothing happens if no note is selected
+    }
+
+    const updatedNote: Note = {
+      //new const for the note after update
+      id: selectedNote.id,
+      title: title,
+      content: content,
+    };
+
+    //creates new list with all the same notes but now the updated note
+    const updatedNotesList = notes.map(
+      (note) =>
+        note.id === selectedNote.id //checks if current note map function is on is the same as the selected note
+          ? updatedNote //if so, replaces current note with update
+          : note //if not, no change occurs
+    );
+
+    //reset everything
+    setNotes(updatedNotesList);
+    setTitle("");
+    setContent("");
+    setSelectedNote(null);
+  };
+
+  //handles click of cancel button (no parameters, resets form)
+  const handleCancel = () => {
+    setTitle("");
+    setContent("");
+    setSelectedNote(null);
+  };
+
   return (
     <div className="app-container">
-      <form className="note-form" onSubmit={(event) => handleSubmit(event)}>
+      <form
+        className="note-form"
+        onSubmit={(event) =>
+          selectedNote ? handleUpdateNote(event) : handleAddNote(event)
+        }
+      >
         <input
           value={title}
           onChange={(event) => setTitle(event.target.value)}
@@ -71,11 +118,18 @@ const App = () => {
           rows={10}
           required
         ></textarea>
-        <button type="submit">Add Note</button>
+        {selectedNote ? (
+          <div className="edit-buttons">
+            <button type="submit">Save</button>
+            <button onClick={handleCancel}>Cancel</button>
+          </div>
+        ) : (
+          <button type="submit">Add Note</button>
+        )}
       </form>
       <div className="notes-grid">
         {notes.map((note) => (
-          <div className="note-item">
+          <div className="note-item" onClick={() => handleNoteClick(note)}>
             <div className="notes-header">
               <button>x</button>
             </div>
